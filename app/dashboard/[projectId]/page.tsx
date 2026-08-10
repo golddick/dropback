@@ -56,17 +56,19 @@ export default async function ProjectPage({ params }: { params: { projectId: str
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-16">
-      <div className="flex items-start justify-between mb-10">
+      <div className="flex items-start flex-col gap-2 md:flex-row justify-between mb-10">
         <div>
           <Link href="/dashboard" className="text-sm text-amber hover:underline mb-2 inline-flex items-center gap-2">
             ← Back to projects
           </Link>
-          <p className="font-mono text-xs text-muted mb-1">PROJECT</p>
-          <h1 className="font-display text-3xl font-bold">{project.name}</h1>
+          <div className="flex items-center w-full justify-start gap-2">
+            <p className="font-mono text-xl text-muted mb-1">PROJECT:</p>
+          <h1 className="font-display text-2xl md:text-3xl font-bold">{project.name}</h1>
+          </div>
           <div className="mt-2 gap-2 space-y-3">
             {!isAuthenticated ? (
               <div className="rounded-lg border border-hairline bg-surface px-4 py-3 text-sm text-muted">
-                View-only mode. Sign in to edit, create records, or invite teammates.
+                View-only mode. Sign in.
               </div>
             ) : (
               <>

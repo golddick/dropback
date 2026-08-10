@@ -25,12 +25,8 @@ export function ShareProjectLink({ projectId }: { projectId: string }) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2 text-sm text-muted">
-        <span>Project ID</span>
-        <span className="rounded-full bg-surface px-2 py-1 text-xs font-mono text-text border border-hairline">
-          {projectId}
-        </span>
-      </div>
-      <button
+    
+         <button
         type="button"
         onClick={handleCopy}
         className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-2 text-sm transition hover:border-amber/60"
@@ -38,6 +34,8 @@ export function ShareProjectLink({ projectId }: { projectId: string }) {
         <span aria-hidden="true">📋</span>
         <span>Copy link</span>
       </button>
+      </div>
+     
       {copied ? <span className="text-emerald-400 text-xs">Link copied!</span> : null}
     </div>
   );

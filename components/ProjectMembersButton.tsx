@@ -22,7 +22,7 @@ export function ProjectMembersButton({
       {open ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <div className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-black p-6 shadow-2xl">
+          <div className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl bg-surface border border-hairline  px-5 py-4 hover:border-amber/50 transition shadow-2xl">
             <div className="flex items-start justify-between gap-4 pb-4">
               <div>
                 <h2 className="font-display text-lg font-bold">Project members</h2>
@@ -33,7 +33,7 @@ export function ProjectMembersButton({
 
             <div className="space-y-3">
               {members.map((member) => (
-                <div key={`${member.projectId}-${member.userId}`} className="rounded-2xl border p-4">
+                <div key={`${member.projectId}-${member.userId}`} >
                   <p className="font-medium text-text">{member.user.email}</p>
                   <p className="text-muted text-sm">{member.role}</p>
                 </div>

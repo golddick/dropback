@@ -17,6 +17,9 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: "desc" },
   });
 
+  console.log("projects", projects);
+  console.log(userId, 'userid')
+
   const mapped = projects.map((p) => ({
     id: p.id,
     name: p.name,
