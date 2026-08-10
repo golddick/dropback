@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  tester
+  developer
+}
+
+enum RecordStatus {
+  open
+  in_progress
+  fixed_pending_retest
+  verified
+  still_broken
+  closed
+}
+
+enum EventType {
+  screenshot
+  video
+  note
+  status_change
+  comment
+}
+
+enum InviteStatus {
+  pending
+  accepted
+  expired
+}
+
+// Note: no @default(cuid()) — IDs are generated in app code via lib/ids.ts
+// (DropID: https://www.dropaphi.xyz/docs/dropid), matching DropAPHI's own
+// documented Prisma usage of assigning `id` explicitly on create().
+
+model User {
+  id        String   @id
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  ownedProjects Project[]      @relation("ProjectOwner")
+  memberships   Member[]
+  records       TestRecord[]
+  events        RecordEvent[]
+  sentInvites   Invite[]
+
+  @@map("users")
+}
+
+model Project {
+  id        String   @id
+  name      String
+  ownerId   String   @map("owner_id")
+  owner     User     @relation("ProjectOwner", fields: [ownerId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  members Member[]
+  records TestRecord[]
+  invites Invite[]
+
+  @@map("projects")
+}
+
+model Member {
+  projectId String @map("project_id")
+  userId    String @map("user_id")
+  role      Role
+
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@id([projectId, userId])
+  @@map("members")
+}
+
+// A user must be invited and accept before they can act as a member —
+// invites are created by any existing member (tester or developer).
+model Invite {
+  id          String       @id
+  projectId   String       @map("project_id")
+  email       String
+  role        Role
+  token       String       @unique
+  invitedById String       @map("invited_by_id")
+  status      InviteStatus @default(pending)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  expiresAt   DateTime     @map("expires_at")
+
+  project   Project @relation(fields: [projectId], references: [id])
+  invitedBy User    @relation(fields: [invitedById], references: [id])
+
+  @@map("invites")
+}
+
+model TestRecord {
+  id         String       @id
+  projectId  String       @map("project_id")
+  reporterId String       @map("reporter_id")
+  url        String?
+  status     RecordStatus @default(open)
+  createdAt  DateTime     @default(now()) @map("created_at")
+
+  project  Project       @relation(fields: [projectId], references: [id])
+  reporter User          @relation(fields: [reporterId], references: [id])
+  events   RecordEvent[]
+
+  @@map("test_records")
+}
+
+model RecordEvent {
+  id        String    @id
+  recordId  String    @map("record_id")
+  actorId   String    @map("actor_id")
+  type      EventType
+  payload   Json
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  record TestRecord @relation(fields: [recordId], references: [id])
+  actor  User       @relation(fields: [actorId], references: [id])
+
+  @@map("record_events")
+}
